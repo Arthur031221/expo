@@ -148,4 +148,27 @@ By default, React Navigation supports safe areas and uses `react-native-safe-are
 
 ### Usage with web
 
-If you are targeting the web, set up `SafeAreaProvider` as described in the [usage section](#usage). If you are doing server-side rendering (SSR), see the [Web SSR section](https://appandflow.github.io/react-native-safe-area-context/optimizations#web-ssr) in the library's documentation.
+Expo Router disables automatic safe-area measurements on web to preserve streamed content during hydration. Under Router's provider, `useSafeAreaInsets()` and `useSafeAreaFrame()` return zero values, and `SafeAreaView` does not add safe-area spacing. Native behavior is unchanged.
+
+If your web app needs safe-area spacing, use CSS `env(safe-area-inset-*)` values. For example, apply a class to an element in a [web-specific route](/router/advanced/platform-specific-modules/):
+
+```tsx src/app/index.web.tsx
+import './safe-area.css';
+
+export default function HomeScreen() {
+  return <main className="safe-area-content">Content is in the safe area.</main>;
+}
+```
+
+```css src/app/safe-area.css
+.safe-area-content {
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+}
+```
+
+The browser updates this spacing without a React state update. CSS values do not change the numbers returned by the safe-area hooks. Keep a corresponding **src/app/index.tsx** route using `react-native-safe-area-context` for Android and iOS.
+
+Avoid adding another `SafeAreaProvider` to restore automatic measurements on web: it can cause pending streamed content to be discarded during hydration. Apps without Expo Router still need to configure the library's provider themselves.

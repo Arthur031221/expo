@@ -39,7 +39,7 @@ import {
 
 If you set your own padding on the view, it will be added to the padding from the safe area.
 
-> **info** If you are targeting web, you must set up `SafeAreaProvider` as described in the [Context](#context) section.
+> **info** On web with Expo Router, use [CSS safe-area insets](/develop/user-interface/safe-areas/#usage-with-web) for spacing. Without Expo Router, set up `SafeAreaProvider` as described in the [Context](#context) section.
 
 ```jsx
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -144,7 +144,9 @@ Represent the hook result.
 
 ### Context
 
-To use safe area context, you need to add `SafeAreaProvider` in your app root component.
+Expo Router sets up safe area context automatically. On web, its provider returns zero insets and frame values to preserve streaming hydration. Use [CSS for web safe-area spacing](/develop/user-interface/safe-areas/#usage-with-web).
+
+Without Expo Router, add `SafeAreaProvider` in your app root component.
 
 > You may need to add it in other places too, including at the root of any modals any routes when using `react-native-screen`.
 
@@ -186,7 +188,9 @@ function App() {
 
 ### Web SSR
 
-If you are doing server side rendering on the web, you can use `initialSafeAreaInsets` to inject values based on the device the user has, or simply pass zero. Otherwise, insets measurement will break rendering your page content since it is async.
+Expo Router disables automatic safe-area measurements on web. Its hooks return zero values, and `SafeAreaView` does not add safe-area spacing. See [Usage with web](/develop/user-interface/safe-areas/#usage-with-web) for the CSS alternative.
+
+If you configure your own provider for server-side rendering, supply `initialMetrics` so children can render before measurements are available. This does not prevent later measurements from interrupting hydration of pending streamed content.
 
 ### Migrating from CSS
 
@@ -205,7 +209,7 @@ div {
 
 #### After
 
-Universally, the hook `useSafeAreaInsets()` can provide access to this information.
+On Android and iOS, the hook `useSafeAreaInsets()` provides access to this information. With Expo Router on web, keep the CSS approach above because the hook returns zero insets.
 
 ```jsx App.js
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
