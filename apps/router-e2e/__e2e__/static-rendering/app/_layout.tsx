@@ -1,7 +1,8 @@
 import * as Font from 'expo-font';
-import { Stack } from 'expo-router';
+import { Slot, Stack, usePathname } from 'expo-router';
 
 export default function Layout() {
+  const pathname = usePathname();
   const [isLoaded] = Font.useFonts({ sweet: require('../sweet.ttf') });
 
   // This is important for the test because static font extraction will ensure this is never called
@@ -10,5 +11,11 @@ export default function Layout() {
     return null;
   }
 
-  return <Stack />;
+  if (pathname === '/safe-area') {
+    return <Slot />;
+  }
+
+  return (
+    <Stack screenOptions={pathname === '/safe-area-stack' ? { headerShown: false } : undefined} />
+  );
 }

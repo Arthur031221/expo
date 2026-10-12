@@ -106,6 +106,8 @@ describe('exports static with granular bundle splitting', () => {
         'links',
         'styled',
         'suspense',
+        'safe-area',
+        'safe-area-stack',
         'metadata',
         '\\[id\\]',
       ]
