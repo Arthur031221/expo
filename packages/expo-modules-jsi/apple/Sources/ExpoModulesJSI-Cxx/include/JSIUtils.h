@@ -116,6 +116,12 @@ inline jsi::ArrayBuffer arrayBufferFromValue(jsi::IRuntime &runtime, const jsi::
   return value.getObject(runtime).getArrayBuffer(runtime);
 }
 
+// Moves a value's handle into a function, without a clone. `value` is left holding a null pointer, so
+// destroying it afterwards releases nothing.
+inline jsi::Function takeFunctionFromValue(jsi::IRuntime &runtime, jsi::Value &value) {
+  return std::move(value).getObject(runtime).getFunction(runtime);
+}
+
 inline const jsi::Value valueFromError(jsi::IRuntime &runtime, const jsi::JSError &error) {
   return jsi::Value(runtime, error.value());
 }

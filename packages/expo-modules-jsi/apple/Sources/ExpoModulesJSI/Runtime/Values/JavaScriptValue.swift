@@ -385,6 +385,16 @@ public struct JavaScriptValue: JavaScriptType, Sendable, ~Copyable {
     return JavaScriptFunction(runtimeHandle, expo.functionFromValue(jsiRuntime, pointee))
   }
 
+  /// Moves the value into a function, without the clone that ``getFunction()`` makes. Asserts if the
+  /// value is not a function.
+  internal consuming func takeFunction() -> JavaScriptFunction {
+    guard let runtimeHandle, let jsiRuntime = runtimeHandle.pointee else {
+      FatalError.runtimeLost()
+    }
+    assert(isFunction(), "Value is not a function")
+    return JavaScriptFunction(runtimeHandle, expo.takeFunctionFromValue(jsiRuntime, &pointee))
+  }
+
   /// Returns the value as a typed array, or asserts if it is not a typed array.
   @JavaScriptActor
   public func getTypedArray() -> JavaScriptTypedArray {
